@@ -16,7 +16,6 @@ import os
 
 app = FastAPI()  # uvicorn main:app --reload
 
-
 class Organisation(BaseModel):
     founder: str = Query(default=..., min_length=10, max_length=250)
     name: str = Query(default=..., min_length=10, max_length=250)
