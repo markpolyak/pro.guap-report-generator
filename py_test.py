@@ -1,6 +1,5 @@
 import requests
 
-
 def test_1():
     body = {
         "organisation": {
