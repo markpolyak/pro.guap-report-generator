@@ -4,8 +4,8 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 
-from handlers import limiter, router
-from utils import session, close_db, args
+from app.handlers import limiter, router
+from app.utils import session, close_db, args
 
 
 def get_application() -> FastAPI:
