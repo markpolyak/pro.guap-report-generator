@@ -17,4 +17,5 @@ jobs:
       run: redis-cli ping
     - name: start server
       run: |
-           pytest ./report-generator/tests/test.py
+           cd ./report-generator
+           pytest ./tests/test.py
