@@ -4,8 +4,8 @@ from slowapi import Limiter
 from slowapi.util import get_remote_address
 from starlette.responses import FileResponse
 from bs4 import BeautifulSoup
-from utils import session, db
-from forms import AuthForm
+from app.utils import session, db
+from app.forms import AuthForm
 import requests
 import re
 import os
