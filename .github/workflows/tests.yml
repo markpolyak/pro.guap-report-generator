@@ -8,7 +8,7 @@ jobs:
     - name: Building
       run: |
            sudo apt-get upgrade python3
-           pip install --no-cache-dir --upgrade -r ./pythonProject/requirements.txt
+           pip install --no-cache-dir --upgrade -r ./report-generator/requirements.txt
            pip install pytest
     - uses: actions/checkout@v2
     - name: Install redis
@@ -17,4 +17,4 @@ jobs:
       run: redis-cli ping
     - name: start server
       run: |
-           pytest ./pythonProject/tests/test.py
+           pytest ./report-generator/tests/test.py
