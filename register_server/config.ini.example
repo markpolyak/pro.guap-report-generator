@@ -1,2 +1,2 @@
 [backend]
-base_url = http://127.0.0.1:5000/api/v0
+base_url = http://backend/api/v0

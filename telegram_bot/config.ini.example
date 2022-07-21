@@ -4,7 +4,7 @@ api_hash = 1234abcd
 bot_token = 1234:AbC4D
 
 [backend]
-api_url = http://127.0.0.1:5000/api/v0
+api_url = http://backend/api/v0
 
 [register]
 register_url = http://127.0.0.1:5001/register
