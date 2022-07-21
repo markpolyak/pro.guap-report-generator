@@ -1,3 +1,4 @@
+#библиотека для работы с docx
 from docxtpl import DocxTemplate
 import io
 # для года
@@ -10,7 +11,7 @@ import argparse
 import json
 import pickle
 parser = argparse.ArgumentParser()
-
+#присваивание флагов
 parser.add_argument('-o', '--org', help="Info about organisation")
 parser.add_argument('-s', '--stu', help="Info about student")
 parser.add_argument('-r', '--rep' , help = "Info about report")
@@ -21,6 +22,7 @@ now = datetime.datetime.now()
 year = now.year 
 def pr (d):
     doc = DocxTemplate('template.docx')
+    # для автоматического заполнения заголовков
     founder = "МИНИСТЕРСТВО НАУКИ И ВЫСШЕГО ОБРАЗОВАНИЯ РОССИЙСКОЙ ФЕДЕРАЦИИ"
     nameuni = "федеральное государственное автономное образовательное учреждение высшего образования «САНКТ-ПЕТЕРБУРГСКИЙ ГОСУДАРСТВЕННЫЙ УНИВЕРСИТЕТ АЭРОКОСМИЧЕСКОГО ПРИБОРОСТРОЕНИЯ»"
     if not d['organisation'].get('department', ""):
@@ -44,6 +46,7 @@ def pr (d):
     #преобразуем имя студента
     if not d['student'].get('surname', ""):
         d['student']['surname'] = " "
+    # заполнение пустыми полями, для тестов
     if not d['student'].get('name', ""):
         d['student']['name'] = " "
     
@@ -133,17 +136,14 @@ def pr (d):
               }
     doc.render(context)
     i = 0;
+    # запись заголовков
     lend = len(d["report_structure"])
     while lend != 0:
         doc.add_heading(d["report_structure"][i], level=1)
         doc.add_paragraph('')
         i = i +1
         lend = lend - 1 
-    ######doc.save('result2.docx')
-    #document = Document()
-    
-    #document = Document()
-    #doc1 = open('report.docx', 'rb').read()
+   
    
     ##############
     # Create in-memory buffer
@@ -159,13 +159,14 @@ def pr (d):
 def main():
     d = {}
     args = parser.parse_args()
+    # получение данных с командной строки
     d["organisation"] = json.loads(args.org)
     d["student"] = json.loads(args.stu)
     d["report"] = json.loads(args.rep)
     d["teacher"] = json.loads(args.tea)
     d["report_structure"] = json.loads(args.struc)
    
-  
+    # побайтная запись в файл
     with open("result.docx", "wb") as f:
         for i in pr(d):
             f.write(i)
