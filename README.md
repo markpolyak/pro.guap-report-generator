@@ -17,13 +17,13 @@ docker build --tag report-register ./register_server/
 Перед запуском необходимо создать мост между ботом и бэкендом:
 
 ```shell
-docker network create report-bot
+docker network create report-net
 ```
 
 Запуск:
 
 ```shell
 docker run --rm --net report-net --name bot -d report-bot
-docker run --rm --net report-net --name backend -d report-backend
-docker run --rm --name register -d --publish 8080:5000 report-register
+docker run --rm --net report-net --name backend -d report-mock-backend
+docker run --rm --net report-net --name register -d --publish 8080:5000 report-register
 ```
