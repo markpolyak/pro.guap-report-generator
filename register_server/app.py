@@ -11,12 +11,12 @@ config.read('config.ini')
 backend_url = config['backend']['base_url']
 
 
-@app.get('/register')
+@app.get('/')
 def register_get():
     return render_template('register.html')
 
 
-@app.post('/register')
+@app.post('/')
 def register_post():
     username = request.form['username']
     password = request.form['password']
