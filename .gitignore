@@ -127,3 +127,15 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Database files
+*.session
+*session-journal
+*.sqlite
+
+# IDE
+.idea
+
+# User configs
+telegram_bot/config.ini
+register_server/config.ini
