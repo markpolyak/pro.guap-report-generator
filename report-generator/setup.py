@@ -13,7 +13,8 @@ setup(
         'pydantic==1.9.1',
         'beautifulsoup4==4.11.1',
         'starlette==0.19.1',
-        'slowapi==0.1.5'
+        'slowapi==0.1.5',
+        'lxml==4.9.1'
     ],
     scripts=['app/main.py']
 )
