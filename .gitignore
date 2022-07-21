@@ -132,3 +132,10 @@ dmypy.json
 *.session
 *session-journal
 *.sqlite
+
+# IDE
+.idea
+
+# User configs
+telegram_bot/config.ini
+register_server/config.ini
