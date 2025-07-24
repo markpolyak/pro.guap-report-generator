@@ -4,8 +4,6 @@ import json
 import os
 import tempfile
 from datetime import datetime
-from docxtpl import DocxTemplate
-from docx import Document
 import sys
 
 # 测试数据
@@ -38,155 +36,104 @@ test_data = {
     }
 }
 
-def test_1():
+@pytest.fixture
+def setup_test_files():
+    """创建临时测试文件"""
+    # 创建临时目录
+    tmp_dir = tempfile.mkdtemp()
+    json_path = os.path.join(tmp_dir, 'test.json')
+    
+    # 创建测试JSON文件
+    with open(json_path, 'w', encoding='utf-8') as f:
+        json.dump(test_data, f, ensure_ascii=False)
+    
+    # 创建空模板文件
+    template_path = os.path.join(tmp_dir, 'template.docx')
+    open(template_path, 'a').close()
+    
+    yield {
+        "json_path": json_path,
+        "template_path": template_path,
+        "output_path": os.path.join(tmp_dir, 'output.docx'),
+        "tmp_dir": tmp_dir
+    }
+    
+    # 清理临时文件
+    for f in [json_path, template_path]:
+        if os.path.exists(f):
+            os.remove(f)
+    os.rmdir(tmp_dir)
+
+def test_task_title(setup_test_files):
     """测试任务标题是否正确加载"""
-    try:
-        data_docx = main.load_data_from_json('2.txt')
-        if 'title' not in data_docx or not data_docx['title']:
-            assert False, "Проверьте заголовок"
-        if data_docx['title'] != "ЛР1. Знакомство с командным интерпретатором bash":
-            assert False, "Проверьте заголовок"
-    except Exception:
-        assert False, "Проверьте заголовок"
+    data_docx = main.load_data_from_json(setup_test_files["json_path"])
+    assert data_docx['title'] == "ЛР1. Знакомство с командным интерпретатором bash"
 
-def test_2():
+def test_teacher_status(setup_test_files):
     """测试教师状态是否正确"""
-    try:
-        data_docx = main.load_data_from_json('2.txt')
-        if 'position' not in data_docx or not data_docx['position']:
-            assert False, "Статус преподавателя"
-        if data_docx['position'] != "Ректор, д.т.н., проф.":
-            assert False, "Статус преподавателя"
-    except Exception:
-        assert False, "Статус преподавателя"
+    data_docx = main.load_data_from_json(setup_test_files["json_path"])
+    assert data_docx['position'] == "Ректор, д.т.н., проф."
 
-def test_3():
+def test_teacher_name(setup_test_files):
     """测试教师姓名是否正确"""
-    try:
-        data_docx = main.load_data_from_json('2.txt')
-        if 't_name' not in data_docx or not data_docx['t_name']:
-            assert False, "ФИО преподавателя"
-        expected_name = "Антохина Юлия Анатольевна"
-        if data_docx['t_name'] != expected_name:
-            assert False, "ФИО преподавателя"
-    except Exception:
-        assert False, "ФИО преподавателя"
+    data_docx = main.load_data_from_json(setup_test_files["json_path"])
+    assert data_docx['t_name'] == "Антохина Юлия Анатольевна"
 
-def test_4():
+def test_subject_data(setup_test_files):
     """测试学科数据是否正确"""
-    try:
-        data_docx = main.load_data_from_json('2.txt')
-        if 'subject' not in data_docx or not data_docx['subject']:
-            assert False, "Данные о предмете"
-        if data_docx['subject'] != "Операционные системы":
-            assert False, "Данные о предмете"
-    except Exception:
-        assert False, "Данные о предмете"
+    data_docx = main.load_data_from_json(setup_test_files["json_path"])
+    assert data_docx['subject'] == "Операционные системы"
 
-def test_5():
+def test_student_group(setup_test_files):
     """测试学生组别是否正确"""
-    try:
-        data_docx = main.load_data_from_json('2.txt')
-        if 'class' not in data_docx or not data_docx['class']:
-            assert False, "Группа студента"
-        if data_docx['class'] != "4931":
-            assert False, "Группа студента"
-    except Exception:
-        assert False, "Группа студента"
+    data_docx = main.load_data_from_json(setup_test_files["json_path"])
+    assert data_docx['class'] == "4931"
 
-def test_6():
+def test_student_name(setup_test_files):
     """测试学生姓名是否正确"""
-    try:
-        data_docx = main.load_data_from_json('2.txt')
-        if 'st_name' not in data_docx or not data_docx['st_name']:
-            assert False, "ФИО студента"
-        expected_name = "Иванов Иван Иванович"
-        if data_docx['st_name'] != expected_name:
-            assert False, "ФИО студента"
-    except Exception:
-        assert False, "ФИО студента"
+    data_docx = main.load_data_from_json(setup_test_files["json_path"])
+    assert data_docx['st_name'] == "Иванов Иван Иванович"
 
-def test_7():
+def test_time_format(setup_test_files):
     """测试时间格式是否正确"""
-    try:
-        data_docx = main.load_data_from_json('2.txt')
-        if 'time' not in data_docx or not data_docx['time']:
-            assert False, "Формат времени"
-        # 检查时间格式是否为 YYYY/MM/DD
-        time_parts = data_docx['time'].split('/')
-        if len(time_parts) != 3:
-            assert False, "Формат времени"
-        # 检查是否为有效日期
-        try:
-            datetime.strptime(data_docx['time'], '%Y/%m/%d')
-        except ValueError:
-            assert False, "Формат времени"
-    except Exception:
-        assert False, "Формат времени"
+    data_docx = main.load_data_from_json(setup_test_files["json_path"])
+    time_parts = data_docx['time'].split('/')
+    assert len(time_parts) == 3
+    datetime.strptime(data_docx['time'], '%Y/%m/%d')
 
-def test_8():
+def test_missing_file():
     """测试JSON文件不存在的错误处理"""
-    try:
+    with pytest.raises(FileNotFoundError):
         main.load_data_from_json('nonexistent.json')
-        assert False, "Обработка ошибок файла"
-    except FileNotFoundError:
-        # 这是期望的行为
-        pass
-    except Exception:
-        assert False, "Обработка ошибок файла"
 
-
-def test_9():
+def test_missing_fields():
     """测试缺少必要字段的处理"""
     # 创建临时的不完整JSON文件
-    incomplete_data = {"student": {"name": "Test"}}  # 缺少必要字段
-    
     with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False, encoding='utf-8') as f:
-        json.dump(incomplete_data, f, ensure_ascii=False)
+        json.dump({"student": {"name": "Test"}}, f, ensure_ascii=False)
         temp_file = f.name
     
     try:
-        main.load_data_from_json(temp_file)
-        assert False, "Обработка отсутствующих полей"
-    except KeyError:
-        # 这是期望的行为
-        pass
-    except Exception:
-        assert False, "Обработка отсутствующих полей"
+        with pytest.raises(KeyError):
+            main.load_data_from_json(temp_file)
     finally:
         os.unlink(temp_file)
 
-def test_10():
+def test_document_generation(setup_test_files):
     """测试文档生成功能"""
-    if not os.path.exists('./шаблон.docx'):
-        pytest.skip("模板文件不存在，跳过文档生成测试")
-    
-    try:
-        # 测试文档生成
-        result = main.generate_document('./шаблон.docx', 'test_result.docx', '2.txt')
-        if not result:
-            assert False, "Генерация документа"
-        
-        # 检查输出文件是否存在
-        if not os.path.exists('test_result.docx'):
-            assert False, "Генерация документа"
-            
-        # 清理测试文件
-        if os.path.exists('test_result.docx'):
-            os.remove('test_result.docx')
-            
-    except Exception:
-        assert False, "Генерация документа"
+    result = main.generate_document(
+        template_path=setup_test_files["template_path"],
+        output_path=setup_test_files["output_path"],
+        json_file_path=setup_test_files["json_path"]
+    )
+    assert result is True
+    assert os.path.exists(setup_test_files["output_path"])
 
-def test_11():
+def test_missing_template(setup_test_files):
     """测试模板文件不存在的处理"""
-    try:
-        result = main.generate_document('nonexistent_template.docx', 'test_output.docx', '2.txt')
-        if result:  # 应该返回False
-            assert False, "Обработка отсутствующего шаблона"
-    except Exception:
-        assert False, "Обработка отсутствующего шаблона"
-
-if __name__ == "__main__":
-    # 运行所有测试
-    pytest.main([__file__, "-v"])
+    result = main.generate_document(
+        template_path="nonexistent_template.docx",
+        output_path=setup_test_files["output_path"],
+        json_file_path=setup_test_files["json_path"]
+    )
+    assert result is False
