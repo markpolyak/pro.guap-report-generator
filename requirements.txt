@@ -3,3 +3,4 @@ werkzeug
 flask-cors
 python-docx
 docxtpl
+pytest 
