@@ -1,0 +1,48 @@
+name: Generate Report Demo
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number for report'
+        required: true
+
+jobs:
+  generate-report:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+      
+    - name: Generate report
+      run: |
+        python -c "
+        import requests
+        import json
+        
+        with open('tests/test_data.json') as f:
+            data = json.load(f)
+            
+        response = requests.post(
+            'http://localhost:8000/generate-report/',
+            json=data
+        )
+        
+        with open('report_example.docx', 'wb') as f:
+            f.write(response.content)
+        "
+        
+    - name: Upload report artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: generated-report
+        path: report_example.docx
